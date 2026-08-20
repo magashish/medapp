@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "MedSathi",
+    "slug": "medapp",
+    "version": "1.0.0",
+    "scheme": "medsathi",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.medsathi.app"
+    },
+    "android": {
+      "package": "com.medsathi.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0F7A4F",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["SCHEDULE_EXACT_ALARM", "RECEIVE_BOOT_COMPLETED", "POST_NOTIFICATIONS"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#0F7A4F"
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F4F8F5",
+          "image": "./assets/icon.png",
+          "imageWidth": 160
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

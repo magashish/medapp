@@ -1,0 +1,95 @@
+import * as Notifications from "expo-notifications";
+import { Platform } from "react-native";
+import type { Medicine, Schedule } from "@/db/types";
+
+export const DOSE_CATEGORY = "dose-reminder";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
+export async function ensureNotificationSetup(): Promise<boolean> {
+  const settings = await Notifications.getPermissionsAsync();
+  let granted = settings.granted;
+  if (!granted) {
+    const req = await Notifications.requestPermissionsAsync();
+    granted = req.granted;
+  }
+
+  await Notifications.setNotificationCategoryAsync(DOSE_CATEGORY, [
+    {
+      identifier: "TAKEN",
+      buttonTitle: "Taken",
+      options: { opensAppToForeground: false },
+    },
+    {
+      identifier: "SKIP",
+      buttonTitle: "Skip",
+      options: { opensAppToForeground: false },
+    },
+  ]);
+
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync("dose-reminders", {
+      name: "Dose reminders",
+      importance: Notifications.AndroidImportance.HIGH,
+      sound: "default",
+      vibrationPattern: [0, 250, 250, 250],
+    });
+  }
+
+  return granted;
+}
+
+function parseIds(value: string | null): string[] {
+  if (!value) return [];
+  return value.split(",").filter(Boolean);
+}
+
+export async function cancelScheduleNotifications(schedule: Schedule): Promise<void> {
+  const ids = parseIds(schedule.notification_id);
+  await Promise.all(ids.map((id) => Notifications.cancelScheduledNotificationAsync(id).catch(() => {})));
+}
+
+export async function scheduleNotificationsForSchedule(
+  schedule: Schedule,
+  medicine: Medicine
+): Promise<string> {
+  await cancelScheduleNotifications(schedule);
+
+  const [hour, minute] = schedule.time_of_day.split(":").map(Number);
+  const days = schedule.days_of_week.split(",").map(Number);
+  const ids: string[] = [];
+
+  for (const dow of days) {
+    const id = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: `Time for ${medicine.name}${medicine.strength ? " " + medicine.strength : ""}`,
+        body: medicine.instructions || "Tap to open MedSathi and mark this dose.",
+        sound: "default",
+        categoryIdentifier: DOSE_CATEGORY,
+        data: {
+          scheduleId: schedule.id,
+          medicineId: medicine.id,
+          profileId: medicine.profile_id,
+          timeOfDay: schedule.time_of_day,
+        },
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+        weekday: dow + 1,
+        hour,
+        minute,
+      },
+    });
+    ids.push(id);
+  }
+
+  return ids.join(",");
+}
