@@ -2,7 +2,7 @@ export type Lang = "en" | "hi";
 
 export const dict = {
   en: {
-    appName: "MedSathi",
+    appName: "MedMate",
     tagline: "Medicine reminders for the whole family",
     heroDesc: "Track doses, share progress with family, and never miss a refill.",
     getStarted: "Get started",
@@ -96,7 +96,7 @@ export const dict = {
     caregiverInvitePending: "They'll be linked automatically once they sign up with this email.",
   },
   hi: {
-    appName: "मेडसाथी",
+    appName: "मेडमेट",
     tagline: "पूरे परिवार के लिए दवा अनुस्मारक",
     heroDesc: "खुराक ट्रैक करें, परिवार के साथ प्रगति साझा करें, और कभी रिफिल न चूकें।",
     getStarted: "शुरू करें",

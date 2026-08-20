@@ -1,19 +1,19 @@
 {
   "expo": {
-    "name": "MedSathi",
+    "name": "MedMate",
     "slug": "medapp",
     "version": "1.0.0",
-    "scheme": "medsathi",
+    "scheme": "medmate",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.medsathi.app"
+      "bundleIdentifier": "com.medmate.app"
     },
     "android": {
-      "package": "com.medsathi.app",
+      "package": "com.medmate.app",
       "adaptiveIcon": {
         "backgroundColor": "#0F7A4F",
         "foregroundImage": "./assets/android-icon-foreground.png",

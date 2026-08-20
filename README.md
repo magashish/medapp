@@ -1,4 +1,4 @@
-# MedSathi
+# MedMate
 
 A medicine reminder app for Indian families: an Expo (React Native) app backed by a
 Laravel API, so a family member's medicine schedule and adherence history are shared

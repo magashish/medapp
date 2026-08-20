@@ -43,7 +43,7 @@ export default function History() {
               .join(", ")
         ),
       "",
-      "— via MedSathi",
+      "— via MedMate",
     ].filter(Boolean);
     await Share.share({ message: lines.join("\n") });
   };

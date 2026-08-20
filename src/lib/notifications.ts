@@ -65,7 +65,7 @@ export async function scheduleNotificationsForSchedule(schedule: Schedule, medic
     const id = await Notifications.scheduleNotificationAsync({
       content: {
         title: `Time for ${medicine.name}${medicine.strength ? " " + medicine.strength : ""}`,
-        body: medicine.instructions || "Tap to open MedSathi and mark this dose.",
+        body: medicine.instructions || "Tap to open MedMate and mark this dose.",
         sound: "default",
         categoryIdentifier: DOSE_CATEGORY,
         data: {
