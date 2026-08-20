@@ -6,15 +6,24 @@ import { Screen } from "@/components/Screen";
 import { ProfileHeader } from "@/components/ProfileHeader";
 import { DoseCard } from "@/components/DoseCard";
 import { LowStockBanner } from "@/components/LowStockBanner";
+import { QuickActions } from "@/components/QuickActions";
 import { useProfiles } from "@/state/ProfileContext";
+import { useAuth } from "@/state/AuthContext";
 import { useI18n } from "@/i18n/context";
 import { useTodayDoses } from "@/hooks/useTodayDoses";
 import { listMedicines } from "@/db/queries";
 import type { Medicine } from "@/db/types";
 import { colors, spacing, type } from "@/theme";
 
+function greetingKey(hour: number): "goodMorning" | "goodAfternoon" | "goodEvening" {
+  if (hour < 12) return "goodMorning";
+  if (hour < 17) return "goodAfternoon";
+  return "goodEvening";
+}
+
 export default function Today() {
   const { activeProfile } = useProfiles();
+  const { user } = useAuth();
   const { t } = useI18n();
   const { doses, loading, mark } = useTodayDoses(activeProfile?.id ?? null);
   const [medicines, setMedicines] = useState<Medicine[]>([]);
@@ -34,15 +43,21 @@ export default function Today() {
     }, [loadMedicines])
   );
 
-  const todayLabel = new Date().toLocaleDateString(undefined, {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  });
+  const now = new Date();
+  const todayLabel = now.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" });
+  const firstName = user?.name?.split(" ")[0];
 
   return (
     <Screen>
-      <ProfileHeader subtitle={todayLabel} />
+      <View>
+        <Text style={[type.h1]}>
+          {t(greetingKey(now.getHours()))}
+          {firstName ? `, ${firstName}` : ""} 👋
+        </Text>
+        <Text style={[type.small, { color: colors.textMuted, marginTop: spacing.xs }]}>{todayLabel}</Text>
+      </View>
+
+      <ProfileHeader />
       <LowStockBanner medicines={medicines} />
 
       {loading ? (
@@ -55,10 +70,12 @@ export default function Today() {
           </Text>
         </View>
       ) : (
-        doses.map((dose) => (
-          <DoseCard key={dose.scheduleId} dose={dose} onMark={(status) => mark(dose, status)} />
+        doses.map((dose, i) => (
+          <DoseCard key={dose.scheduleId} dose={dose} index={i} onMark={(status) => mark(dose, status)} />
         ))
       )}
+
+      <QuickActions />
     </Screen>
   );
 }

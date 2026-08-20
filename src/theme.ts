@@ -1,24 +1,31 @@
 export const colors = {
-  primary: "#0F7A4F",
-  primaryDark: "#0B5C3B",
-  primaryLight: "#E6F4EC",
+  primary: "#22A55E",
+  primaryDark: "#178449",
+  primaryLight: "#E3F6EA",
   accent: "#E8722C",
   accentLight: "#FCE9DA",
-  danger: "#DC2626",
+  danger: "#E5484D",
   dangerLight: "#FBE8E7",
-  warning: "#D97706",
+  warning: "#D9A017",
   warningLight: "#FDF0DC",
-  success: "#16A34A",
-  successLight: "#E4F5E9",
+  success: "#22A55E",
+  successLight: "#E3F6EA",
   text: "#1A2E22",
-  textMuted: "#5B6B60",
-  textFaint: "#8A9A8F",
-  border: "#E2E8E4",
-  borderStrong: "#C7D3CA",
-  background: "#F4F8F5",
+  textMuted: "#66766C",
+  textFaint: "#96A39B",
+  border: "#E6ECE7",
+  borderStrong: "#CFDACF",
+  background: "#F6FAF7",
   card: "#FFFFFF",
   white: "#FFFFFF",
   overlay: "rgba(15, 30, 22, 0.45)",
+  // Pastel accents used to color-code the "Today" schedule cards, cycling by index.
+  scheduleTints: [
+    { bg: "#EAF2FF", fg: "#3B7DDB" },
+    { bg: "#FFF6DD", fg: "#C08A12" },
+    { bg: "#F1EAFB", fg: "#8B5CF6" },
+    { bg: "#F1F3F4", fg: "#5B6B60" },
+  ],
 } as const;
 
 export const spacing = {
@@ -33,10 +40,10 @@ export const spacing = {
 } as const;
 
 export const radius = {
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 24,
+  sm: 10,
+  md: 14,
+  lg: 20,
+  xl: 28,
   full: 999,
 } as const;
 
@@ -59,16 +66,16 @@ export const type = {
 export const shadow = {
   card: {
     shadowColor: "#0B2016",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
     elevation: 2,
   },
   raised: {
     shadowColor: "#0B2016",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
     elevation: 6,
   },
 } as const;

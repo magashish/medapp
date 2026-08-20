@@ -8,7 +8,7 @@ import { TextField } from "@/components/TextField";
 import { useI18n } from "@/i18n/context";
 import { useAuth } from "@/state/AuthContext";
 import { ApiError } from "@/api/client";
-import { colors, spacing, type } from "@/theme";
+import { colors, radius, spacing, type } from "@/theme";
 
 export default function Login() {
   const router = useRouter();
@@ -35,7 +35,7 @@ export default function Login() {
   return (
     <Screen contentStyle={styles.content}>
       <View style={styles.iconWrap}>
-        <Ionicons name="medical" size={40} color={colors.primary} />
+        <Ionicons name="medical" size={40} color={colors.white} />
       </View>
       <View>
         <Text style={[type.h1, { textAlign: "center" }]}>{t("appName")}</Text>
@@ -89,10 +89,10 @@ const styles = StyleSheet.create({
   },
   iconWrap: {
     alignSelf: "center",
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    backgroundColor: colors.primaryLight,
+    width: 80,
+    height: 80,
+    borderRadius: radius.xl,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },

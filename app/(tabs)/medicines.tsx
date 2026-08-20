@@ -63,9 +63,21 @@ export default function Medicines() {
           </Text>
         </View>
       ) : (
-        medicines.map((m) => (
+        medicines.map((m, i) => (
           <View key={m.id} style={[styles.card, shadow.card]}>
             <View style={styles.cardTop}>
+              <View
+                style={[
+                  styles.medIcon,
+                  { backgroundColor: colors.scheduleTints[i % colors.scheduleTints.length].bg },
+                ]}
+              >
+                <Ionicons
+                  name="medical"
+                  size={20}
+                  color={colors.scheduleTints[i % colors.scheduleTints.length].fg}
+                />
+              </View>
               <View style={{ flex: 1 }}>
                 <Text style={type.h3}>
                   {m.name}
@@ -129,6 +141,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     gap: spacing.sm,
+  },
+  medIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.md,
+    alignItems: "center",
+    justifyContent: "center",
   },
   deleteBtn: {
     width: 38,

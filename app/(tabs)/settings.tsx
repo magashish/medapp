@@ -26,6 +26,30 @@ export default function Settings() {
       <Text style={type.h1}>{t("settings")}</Text>
 
       <Card>
+        <View style={styles.accountRow}>
+          <View style={styles.accountAvatar}>
+            <Text style={styles.accountAvatarText}>{(user?.name ?? "?").charAt(0).toUpperCase()}</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={type.h3}>{user?.name}</Text>
+            <Text style={[type.small, { color: colors.textMuted }]}>{user?.email}</Text>
+          </View>
+        </View>
+        <Button
+          label={t("logout")}
+          variant="secondary"
+          icon="log-out-outline"
+          onPress={() =>
+            Alert.alert(t("logout"), undefined, [
+              { text: t("cancel"), style: "cancel" },
+              { text: t("logout"), style: "destructive", onPress: () => logout() },
+            ])
+          }
+          style={{ marginTop: spacing.lg }}
+        />
+      </Card>
+
+      <Card>
         <Text style={[type.smallMedium, { color: colors.textMuted, marginBottom: spacing.md }]}>
           {t("language")}
         </Text>
@@ -77,22 +101,6 @@ export default function Settings() {
           icon="notifications-outline"
           onPress={() => ensureNotificationSetup()}
           style={{ marginTop: spacing.md }}
-        />
-      </Card>
-
-      <Card>
-        <Text style={[type.bodyMedium, { marginBottom: spacing.xs }]}>{user?.name}</Text>
-        <Text style={[type.small, { color: colors.textMuted, marginBottom: spacing.md }]}>{user?.email}</Text>
-        <Button
-          label={t("logout")}
-          variant="secondary"
-          icon="log-out-outline"
-          onPress={() =>
-            Alert.alert(t("logout"), undefined, [
-              { text: t("cancel"), style: "cancel" },
-              { text: t("logout"), style: "destructive", onPress: () => logout() },
-            ])
-          }
         />
       </Card>
     </Screen>
@@ -166,6 +174,23 @@ function CaregiverAccessCard({ profileId, profileName }: { profileId: number; pr
 }
 
 const styles = StyleSheet.create({
+  accountRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+  },
+  accountAvatar: {
+    width: 56,
+    height: 56,
+    borderRadius: radius.lg,
+    backgroundColor: colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  accountAvatarText: {
+    ...type.h2,
+    color: colors.white,
+  },
   langRow: {
     flexDirection: "row",
     gap: spacing.sm,

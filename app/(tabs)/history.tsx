@@ -1,21 +1,29 @@
-import React, { useMemo } from "react";
-import { Share, StyleSheet, Text, View } from "react-native";
+import React, { useMemo, useState } from "react";
+import { Pressable, Share, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Screen } from "@/components/Screen";
 import { ProfileHeader } from "@/components/ProfileHeader";
 import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { Badge } from "@/components/Badge";
+import { ProgressRing } from "@/components/ProgressRing";
+import { WeekStrip } from "@/components/WeekStrip";
 import { useProfiles } from "@/state/ProfileContext";
 import { useI18n } from "@/i18n/context";
 import { useDoseHistory } from "@/hooks/useDoseHistory";
 import { formatDoseDate, formatTime } from "@/lib/date";
 import { colors, radius, spacing, type } from "@/theme";
 
+type Period = "week" | "month";
+
 export default function History() {
   const { activeProfile } = useProfiles();
   const { t } = useI18n();
-  const { entries, loading, adherence, takenCount, total } = useDoseHistory(activeProfile?.id ?? null, 30);
+  const [period, setPeriod] = useState<Period>("month");
+  const { entries, loading, adherence, takenCount, total } = useDoseHistory(
+    activeProfile?.id ?? null,
+    period === "week" ? 7 : 30
+  );
 
   const grouped = useMemo(() => {
     const map = new Map<string, typeof entries>();
@@ -27,10 +35,14 @@ export default function History() {
     return Array.from(map.entries());
   }, [entries]);
 
+  const encouragement =
+    adherence === null ? null : adherence >= 80 ? t("greatJob") : adherence >= 50 ? t("keepGoing") : t("needsAttention");
+
   const handleShare = async () => {
     if (!activeProfile) return;
+    const periodLabel = period === "week" ? t("thisWeek") : t("last30Days");
     const lines = [
-      `${activeProfile.name} — ${t("doseHistory")} (${t("last30Days")})`,
+      `${activeProfile.name} — ${t("doseHistory")} (${periodLabel})`,
       adherence !== null ? `${t("adherence")}: ${adherence}% (${takenCount}/${total})` : "",
       "",
       ...grouped
@@ -53,24 +65,33 @@ export default function History() {
       <ProfileHeader />
 
       <Card>
-        <View style={styles.statRow}>
-          <View>
-            <Text style={[type.small, { color: colors.textMuted }]}>
-              {t("adherence")} · {t("last30Days")}
-            </Text>
-            <Text style={[type.display, { color: colors.primary }]}>
-              {adherence === null ? "—" : `${adherence}%`}
-            </Text>
+        <View style={styles.periodRow}>
+          <Text style={[type.smallMedium, { color: colors.textMuted }]}>{t("adherence")}</Text>
+          <View style={styles.periodToggle}>
+            <PeriodButton label={t("thisWeek")} active={period === "week"} onPress={() => setPeriod("week")} />
+            <PeriodButton label={t("thisMonth")} active={period === "month"} onPress={() => setPeriod("month")} />
+          </View>
+        </View>
+
+        <View style={styles.ringRow}>
+          <ProgressRing percent={adherence ?? 0} size={116} strokeWidth={11}>
+            <Text style={[type.h1, { color: colors.primary }]}>{adherence === null ? "—" : `${adherence}%`}</Text>
+            {encouragement ? (
+              <Text style={[type.caption, { color: colors.textMuted, textTransform: "none" }]}>
+                {encouragement}
+              </Text>
+            ) : null}
+          </ProgressRing>
+          <View style={{ flex: 1 }}>
             {total > 0 ? (
-              <Text style={[type.small, { color: colors.textMuted }]}>
-                {takenCount}/{total} {t("doses")}
+              <Text style={[type.body, { color: colors.textMuted }]}>
+                {takenCount}/{total} {t("dosesTaken")}
               </Text>
             ) : null}
           </View>
-          <View style={styles.ringWrap}>
-            <Ionicons name="pulse" size={32} color={colors.primary} />
-          </View>
         </View>
+
+        <WeekStrip entries={entries} />
       </Card>
 
       <Button
@@ -93,6 +114,11 @@ export default function History() {
             <Text style={[type.smallMedium, { color: colors.textMuted }]}>{formatDoseDate(date)}</Text>
             {items.map((entry) => (
               <View key={entry.id} style={styles.entryRow}>
+                <Ionicons
+                  name={entry.status === "taken" ? "checkmark-circle" : "close-circle"}
+                  size={20}
+                  color={entry.status === "taken" ? colors.success : colors.textFaint}
+                />
                 <Text style={[type.body, { flex: 1 }]}>
                   {entry.medicine_name ?? "—"} · {formatTime(entry.time_of_day)}
                 </Text>
@@ -106,19 +132,41 @@ export default function History() {
   );
 }
 
+function PeriodButton({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} style={[styles.periodBtn, active && styles.periodBtnActive]}>
+      <Text style={[type.smallMedium, { color: active ? colors.white : colors.textMuted }]}>{label}</Text>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
-  statRow: {
+  periodRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: spacing.lg,
   },
-  ringWrap: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.primaryLight,
-    alignItems: "center",
+  periodToggle: {
+    flexDirection: "row",
+    backgroundColor: colors.background,
+    borderRadius: radius.full,
+    padding: 3,
+  },
+  periodBtn: {
+    minHeight: 36,
+    paddingHorizontal: spacing.md,
     justifyContent: "center",
+    borderRadius: radius.full,
+  },
+  periodBtnActive: {
+    backgroundColor: colors.primary,
+  },
+  ringRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.lg,
+    marginBottom: spacing.xl,
   },
   empty: {
     alignItems: "center",
@@ -131,7 +179,7 @@ const styles = StyleSheet.create({
   entryRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    gap: spacing.sm,
     backgroundColor: colors.card,
     borderRadius: radius.md,
     borderWidth: 1,

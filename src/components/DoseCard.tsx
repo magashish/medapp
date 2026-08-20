@@ -19,13 +19,17 @@ const STATUS_TONE: Record<TodayDose["status"], BadgeTone> = {
 export function DoseCard({
   dose,
   onMark,
+  index = 0,
 }: {
   dose: TodayDose;
   onMark: (status: DoseStatus) => void;
+  index?: number;
 }) {
   const { t } = useI18n();
   const isTaken = dose.status === "taken";
   const isSkipped = dose.status === "skipped";
+  const isMissed = dose.status === "missed";
+  const tint = colors.scheduleTints[index % colors.scheduleTints.length];
 
   const press = (status: DoseStatus) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
@@ -33,21 +37,36 @@ export function DoseCard({
   };
 
   return (
-    <View style={[styles.card, shadow.card, dose.status === "missed" && styles.missedCard]}>
+    <View
+      style={[
+        styles.card,
+        shadow.card,
+        { backgroundColor: isMissed ? colors.dangerLight : tint.bg },
+        isMissed && styles.missedCard,
+      ]}
+    >
       <View style={styles.top}>
-        <View style={styles.timeWrap}>
-          <Ionicons name="time" size={16} color={colors.textMuted} />
-          <Text style={[type.smallMedium, { color: colors.textMuted }]}>{formatTime(dose.timeOfDay)}</Text>
+        <View style={styles.timeRow}>
+          <View style={[styles.iconWrap, { backgroundColor: colors.white }]}>
+            <Ionicons name="medical" size={18} color={isMissed ? colors.danger : tint.fg} />
+          </View>
+          <View>
+            <Text style={[type.smallMedium, { color: isMissed ? colors.danger : tint.fg }]}>
+              {formatTime(dose.timeOfDay)}
+            </Text>
+            <Text style={type.h3}>
+              {dose.medicine.name}
+              {dose.medicine.strength ? ` · ${dose.medicine.strength}` : ""}
+            </Text>
+          </View>
         </View>
         <Badge label={t(dose.status)} tone={STATUS_TONE[dose.status]} />
       </View>
 
-      <Text style={type.h3}>
-        {dose.medicine.name}
-        {dose.medicine.strength ? ` · ${dose.medicine.strength}` : ""}
-      </Text>
       {dose.medicine.instructions ? (
-        <Text style={[type.small, { color: colors.textMuted }]}>{dose.medicine.instructions}</Text>
+        <Text style={[type.small, { color: colors.textMuted, marginLeft: 52 }]}>
+          {dose.medicine.instructions}
+        </Text>
       ) : null}
 
       <View style={styles.actions}>
@@ -76,10 +95,7 @@ export function DoseCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.card,
     borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
     padding: spacing.lg,
     gap: spacing.sm,
   },
@@ -90,12 +106,20 @@ const styles = StyleSheet.create({
   top: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
   },
-  timeWrap: {
+  timeRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.xs,
+    gap: spacing.md,
+    flex: 1,
+  },
+  iconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.md,
+    alignItems: "center",
+    justifyContent: "center",
   },
   actions: {
     flexDirection: "row",

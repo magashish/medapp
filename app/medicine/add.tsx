@@ -10,7 +10,7 @@ import { TimePickerField } from "@/components/TimePickerField";
 import { useI18n } from "@/i18n/context";
 import { useProfiles } from "@/state/ProfileContext";
 import { addMedicineWithSchedules } from "@/lib/medicineActions";
-import { colors, spacing, type } from "@/theme";
+import { colors, radius, spacing, type } from "@/theme";
 
 const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 
@@ -65,6 +65,10 @@ export default function AddMedicine() {
 
   return (
     <Screen>
+      <View style={styles.iconWrap}>
+        <Ionicons name="medical" size={32} color={colors.white} />
+      </View>
+
       <TextField
         label={t("medicineName")}
         value={name}
@@ -145,6 +149,16 @@ export default function AddMedicine() {
 }
 
 const styles = StyleSheet.create({
+  iconWrap: {
+    alignSelf: "center",
+    width: 64,
+    height: 64,
+    borderRadius: radius.lg,
+    backgroundColor: colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: spacing.sm,
+  },
   numberRow: {
     flexDirection: "row",
     gap: spacing.md,

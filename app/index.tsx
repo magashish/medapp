@@ -7,7 +7,7 @@ import { Button } from "@/components/Button";
 import { useProfiles } from "@/state/ProfileContext";
 import { useAuth } from "@/state/AuthContext";
 import { useI18n } from "@/i18n/context";
-import { colors, spacing, type } from "@/theme";
+import { colors, radius, spacing, type } from "@/theme";
 
 export default function Welcome() {
   const router = useRouter();
@@ -33,7 +33,7 @@ export default function Welcome() {
 
       <View style={styles.hero}>
         <View style={styles.iconWrap}>
-          <Ionicons name="medical" size={44} color={colors.primary} />
+          <Ionicons name="medical" size={44} color={colors.white} />
         </View>
         <Text style={[type.display, styles.title]}>{t("appName")}</Text>
         <Text style={[type.h3, styles.tagline]}>{t("tagline")}</Text>
@@ -86,8 +86,8 @@ const styles = StyleSheet.create({
   iconWrap: {
     width: 88,
     height: 88,
-    borderRadius: 44,
-    backgroundColor: colors.primaryLight,
+    borderRadius: radius.xl,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: spacing.md,
