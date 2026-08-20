@@ -36,14 +36,14 @@ export default function Medicines() {
     }, [load])
   );
 
-  const handleDelete = (medicineId: number, name: string) => {
-    Alert.alert(t("deleteMedicineConfirm"), name, [
+  const handleDelete = (medicine: MedicineWithSchedules) => {
+    Alert.alert(t("deleteMedicineConfirm"), medicine.name, [
       { text: t("cancel"), style: "cancel" },
       {
         text: t("delete"),
         style: "destructive",
         onPress: async () => {
-          await removeMedicineWithSchedules(medicineId);
+          await removeMedicineWithSchedules(medicine);
           load();
         },
       },
@@ -75,7 +75,7 @@ export default function Medicines() {
                   <Text style={[type.small, { color: colors.textMuted }]}>{m.instructions}</Text>
                 ) : null}
               </View>
-              <Pressable onPress={() => handleDelete(m.id, m.name)} style={styles.deleteBtn}>
+              <Pressable onPress={() => handleDelete(m)} style={styles.deleteBtn}>
                 <Ionicons name="trash-outline" size={18} color={colors.danger} />
               </Pressable>
             </View>

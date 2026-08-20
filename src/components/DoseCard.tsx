@@ -2,7 +2,7 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import type { TodayDose } from "@/lib/today";
+import type { TodayDose } from "@/db/queries";
 import type { DoseStatus } from "@/db/types";
 import { Badge, type BadgeTone } from "./Badge";
 import { formatTime } from "@/lib/date";

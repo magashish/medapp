@@ -39,7 +39,7 @@ export default function History() {
           ([date, items]) =>
             `${formatDoseDate(date)}: ` +
             items
-              .map((i) => `${i.medicine?.name ?? "?"} ${formatTime(i.time_of_day)} - ${t(i.status)}`)
+              .map((i) => `${i.medicine_name ?? "?"} ${formatTime(i.time_of_day)} - ${t(i.status)}`)
               .join(", ")
         ),
       "",
@@ -94,7 +94,7 @@ export default function History() {
             {items.map((entry) => (
               <View key={entry.id} style={styles.entryRow}>
                 <Text style={[type.body, { flex: 1 }]}>
-                  {entry.medicine?.name ?? "—"} · {formatTime(entry.time_of_day)}
+                  {entry.medicine_name ?? "—"} · {formatTime(entry.time_of_day)}
                 </Text>
                 <Badge label={t(entry.status)} tone={entry.status === "taken" ? "success" : "muted"} />
               </View>

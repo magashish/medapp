@@ -1,6 +1,7 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import type { Medicine, Schedule } from "@/db/types";
+import { getNotificationIds, setNotificationIds, clearNotificationIds } from "./notificationRegistry";
 
 export const DOSE_CATEGORY = "dose-reminder";
 
@@ -47,21 +48,14 @@ export async function ensureNotificationSetup(): Promise<boolean> {
   return granted;
 }
 
-function parseIds(value: string | null): string[] {
-  if (!value) return [];
-  return value.split(",").filter(Boolean);
-}
-
-export async function cancelScheduleNotifications(schedule: Schedule): Promise<void> {
-  const ids = parseIds(schedule.notification_id);
+export async function cancelScheduleNotifications(scheduleId: number): Promise<void> {
+  const ids = await getNotificationIds(scheduleId);
   await Promise.all(ids.map((id) => Notifications.cancelScheduledNotificationAsync(id).catch(() => {})));
+  await clearNotificationIds(scheduleId);
 }
 
-export async function scheduleNotificationsForSchedule(
-  schedule: Schedule,
-  medicine: Medicine
-): Promise<string> {
-  await cancelScheduleNotifications(schedule);
+export async function scheduleNotificationsForSchedule(schedule: Schedule, medicine: Medicine): Promise<void> {
+  await cancelScheduleNotifications(schedule.id);
 
   const [hour, minute] = schedule.time_of_day.split(":").map(Number);
   const days = schedule.days_of_week.split(",").map(Number);
@@ -76,8 +70,6 @@ export async function scheduleNotificationsForSchedule(
         categoryIdentifier: DOSE_CATEGORY,
         data: {
           scheduleId: schedule.id,
-          medicineId: medicine.id,
-          profileId: medicine.profile_id,
           timeOfDay: schedule.time_of_day,
         },
       },
@@ -91,5 +83,5 @@ export async function scheduleNotificationsForSchedule(
     ids.push(id);
   }
 
-  return ids.join(",");
+  await setNotificationIds(schedule.id, ids);
 }

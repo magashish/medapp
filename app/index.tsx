@@ -5,15 +5,19 @@ import { Ionicons } from "@expo/vector-icons";
 import { Screen } from "@/components/Screen";
 import { Button } from "@/components/Button";
 import { useProfiles } from "@/state/ProfileContext";
+import { useAuth } from "@/state/AuthContext";
 import { useI18n } from "@/i18n/context";
 import { colors, spacing, type } from "@/theme";
 
 export default function Welcome() {
   const router = useRouter();
-  const { profiles, loading } = useProfiles();
+  const { user, loading: authLoading } = useAuth();
+  const { profiles, loading: profilesLoading } = useProfiles();
   const { t, lang, setLang } = useI18n();
 
-  if (loading) return null;
+  if (authLoading) return null;
+  if (!user) return <Redirect href="/login" />;
+  if (profilesLoading) return null;
   if (profiles.length > 0) return <Redirect href="/(tabs)/today" />;
 
   return (

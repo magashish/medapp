@@ -1,10 +1,5 @@
-import {
-  createMedicine,
-  createSchedule,
-  deleteMedicine,
-  listSchedules,
-  setScheduleNotificationId,
-} from "@/db/queries";
+import { createMedicineWithSchedules, deleteMedicine } from "@/db/queries";
+import type { MedicineWithSchedules } from "@/db/types";
 import { cancelScheduleNotifications, scheduleNotificationsForSchedule } from "./notifications";
 
 export async function addMedicineWithSchedules(input: {
@@ -18,35 +13,20 @@ export async function addMedicineWithSchedules(input: {
   times: string[];
   daysOfWeek: string;
 }): Promise<void> {
-  const medicine = await createMedicine({
-    profileId: input.profileId,
-    name: input.name,
-    strength: input.strength,
-    instructions: input.instructions,
-    quantityRemaining: input.quantityRemaining,
-    refillThreshold: input.refillThreshold,
-    doseAmount: input.doseAmount,
-  });
+  const medicine = await createMedicineWithSchedules(input);
 
-  for (const time of input.times) {
-    const schedule = await createSchedule({
-      medicineId: medicine.id,
-      timeOfDay: time,
-      daysOfWeek: input.daysOfWeek,
-    });
+  for (const schedule of medicine.schedules) {
     try {
-      const notificationId = await scheduleNotificationsForSchedule(schedule, medicine);
-      await setScheduleNotificationId(schedule.id, notificationId);
+      await scheduleNotificationsForSchedule(schedule, medicine);
     } catch {
-      // Notifications are best-effort; the dose still shows up in-app.
+      // Notifications are best-effort; the dose still shows up in-app and via server push.
     }
   }
 }
 
-export async function removeMedicineWithSchedules(medicineId: number): Promise<void> {
-  const schedules = await listSchedules(medicineId);
-  for (const schedule of schedules) {
-    await cancelScheduleNotifications(schedule).catch(() => {});
+export async function removeMedicineWithSchedules(medicine: MedicineWithSchedules): Promise<void> {
+  for (const schedule of medicine.schedules) {
+    await cancelScheduleNotifications(schedule.id).catch(() => {});
   }
-  await deleteMedicine(medicineId);
+  await deleteMedicine(medicine.id);
 }

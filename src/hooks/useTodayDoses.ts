@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useFocusEffect } from "expo-router";
-import { getTodayDoses, type TodayDose } from "@/lib/today";
-import { logDose } from "@/db/queries";
-import { todayDateString } from "@/lib/date";
+import { getTodayDoses, logDose, type TodayDose } from "@/db/queries";
 import type { DoseStatus } from "@/db/types";
 
 export function useTodayDoses(profileId: number | null) {
@@ -33,18 +31,10 @@ export function useTodayDoses(profileId: number | null) {
 
   const mark = useCallback(
     async (dose: TodayDose, status: DoseStatus) => {
-      if (profileId === null) return;
-      await logDose({
-        scheduleId: dose.scheduleId,
-        medicineId: dose.medicine.id,
-        profileId,
-        doseDate: todayDateString(),
-        timeOfDay: dose.timeOfDay,
-        status,
-      });
+      await logDose(dose.scheduleId, status);
       await refresh();
     },
-    [profileId, refresh]
+    [refresh]
   );
 
   return { doses, loading, refresh, mark };

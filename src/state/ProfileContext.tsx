@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { listProfiles } from "@/db/queries";
 import type { Profile } from "@/db/types";
+import { useAuth } from "./AuthContext";
 
 const ACTIVE_PROFILE_KEY = "medapp.activeProfileId";
 
@@ -16,24 +17,38 @@ type Ctx = {
 const ProfileContext = createContext<Ctx | null>(null);
 
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
+  const { user, loading: authLoading } = useAuth();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [activeId, setActiveId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   const refreshProfiles = useCallback(async () => {
+    if (!user) {
+      setProfiles([]);
+      return;
+    }
     const rows = await listProfiles();
     setProfiles(rows);
-    return;
-  }, []);
+  }, [user]);
 
   useEffect(() => {
+    if (authLoading) return;
+
+    if (!user) {
+      setProfiles([]);
+      setActiveId(null);
+      setLoading(false);
+      return;
+    }
+
     (async () => {
+      setLoading(true);
       await refreshProfiles();
       const stored = await AsyncStorage.getItem(ACTIVE_PROFILE_KEY);
       if (stored) setActiveId(Number(stored));
       setLoading(false);
     })();
-  }, [refreshProfiles]);
+  }, [user, authLoading, refreshProfiles]);
 
   useEffect(() => {
     if (loading) return;
