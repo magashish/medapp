@@ -7,6 +7,7 @@ import { ProfileHeader } from "@/components/ProfileHeader";
 import { Button } from "@/components/Button";
 import { Badge } from "@/components/Badge";
 import { LowStockBanner } from "@/components/LowStockBanner";
+import { PillIcon } from "@/components/icons/PillIcon";
 import { useProfiles } from "@/state/ProfileContext";
 import { useI18n } from "@/i18n/context";
 import { listMedicines } from "@/db/queries";
@@ -66,16 +67,12 @@ export default function Medicines() {
         medicines.map((m, i) => (
           <View key={m.id} style={[styles.card, shadow.card]}>
             <View style={styles.cardTop}>
-              <View
-                style={[
-                  styles.medIcon,
-                  { backgroundColor: colors.scheduleTints[i % colors.scheduleTints.length].bg },
-                ]}
-              >
-                <Ionicons
-                  name="medical"
-                  size={20}
-                  color={colors.scheduleTints[i % colors.scheduleTints.length].fg}
+              <View style={[styles.medIcon, { backgroundColor: colors.white }]}>
+                <PillIcon
+                  size={26}
+                  colorA={colors.scheduleTints[i % colors.scheduleTints.length].bg}
+                  colorB={colors.white}
+                  outline={colors.scheduleTints[i % colors.scheduleTints.length].fg}
                 />
               </View>
               <View style={{ flex: 1 }}>

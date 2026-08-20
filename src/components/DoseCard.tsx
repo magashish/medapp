@@ -5,6 +5,7 @@ import * as Haptics from "expo-haptics";
 import type { TodayDose } from "@/db/queries";
 import type { DoseStatus } from "@/db/types";
 import { Badge, type BadgeTone } from "./Badge";
+import { PillIcon } from "./icons/PillIcon";
 import { formatTime } from "@/lib/date";
 import { useI18n } from "@/i18n/context";
 import { colors, radius, shadow, spacing, type } from "@/theme";
@@ -48,7 +49,12 @@ export function DoseCard({
       <View style={styles.top}>
         <View style={styles.timeRow}>
           <View style={[styles.iconWrap, { backgroundColor: colors.white }]}>
-            <Ionicons name="medical" size={18} color={isMissed ? colors.danger : tint.fg} />
+            <PillIcon
+              size={26}
+              colorA={isMissed ? colors.dangerLight : tint.bg}
+              colorB={colors.white}
+              outline={isMissed ? colors.danger : tint.fg}
+            />
           </View>
           <View>
             <Text style={[type.smallMedium, { color: isMissed ? colors.danger : tint.fg }]}>

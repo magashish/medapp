@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import { Screen } from "@/components/Screen";
 import { Button } from "@/components/Button";
 import { TextField } from "@/components/TextField";
 import { Chip } from "@/components/Chip";
 import { TimePickerField } from "@/components/TimePickerField";
+import { PillIcon } from "@/components/icons/PillIcon";
 import { useI18n } from "@/i18n/context";
 import { useProfiles } from "@/state/ProfileContext";
 import { addMedicineWithSchedules } from "@/lib/medicineActions";
@@ -66,7 +66,7 @@ export default function AddMedicine() {
   return (
     <Screen>
       <View style={styles.iconWrap}>
-        <Ionicons name="medical" size={32} color={colors.white} />
+        <PillIcon size={36} />
       </View>
 
       <TextField

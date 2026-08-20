@@ -1,9 +1,10 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { Redirect, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Screen } from "@/components/Screen";
 import { Button } from "@/components/Button";
+import { FamilyIllustration } from "@/components/FamilyIllustration";
 import { useProfiles } from "@/state/ProfileContext";
 import { useAuth } from "@/state/AuthContext";
 import { useI18n } from "@/i18n/context";
@@ -14,11 +15,14 @@ export default function Welcome() {
   const { user, loading: authLoading } = useAuth();
   const { profiles, loading: profilesLoading } = useProfiles();
   const { t, lang, setLang } = useI18n();
+  const { width: windowWidth } = useWindowDimensions();
 
   if (authLoading) return null;
   if (!user) return <Redirect href="/login" />;
   if (profilesLoading) return null;
   if (profiles.length > 0) return <Redirect href="/(tabs)/today" />;
+
+  const illustrationWidth = Math.min(340, windowWidth - spacing.xl * 2 - spacing.lg * 2);
 
   return (
     <Screen contentStyle={styles.content}>
@@ -32,8 +36,8 @@ export default function Welcome() {
       </View>
 
       <View style={styles.hero}>
-        <View style={styles.iconWrap}>
-          <Ionicons name="medical" size={44} color={colors.white} />
+        <View style={styles.illustrationCard}>
+          <FamilyIllustration width={illustrationWidth} />
         </View>
         <Text style={[type.display, styles.title]}>{t("appName")}</Text>
         <Text style={[type.h3, styles.tagline]}>{t("tagline")}</Text>
@@ -80,17 +84,16 @@ const styles = StyleSheet.create({
   },
   hero: {
     alignItems: "center",
-    gap: spacing.sm,
-    marginTop: spacing.xl,
+    gap: spacing.xs,
+    marginTop: spacing.sm,
   },
-  iconWrap: {
-    width: 88,
-    height: 88,
+  illustrationCard: {
+    width: "100%",
+    backgroundColor: colors.primaryLight,
     borderRadius: radius.xl,
-    backgroundColor: colors.primary,
+    paddingVertical: spacing.lg,
     alignItems: "center",
-    justifyContent: "center",
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
   title: {
     color: colors.text,

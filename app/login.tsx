@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Link, useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import { Screen } from "@/components/Screen";
 import { Button } from "@/components/Button";
 import { TextField } from "@/components/TextField";
+import { PillIcon } from "@/components/icons/PillIcon";
 import { useI18n } from "@/i18n/context";
 import { useAuth } from "@/state/AuthContext";
 import { ApiError } from "@/api/client";
@@ -35,7 +35,7 @@ export default function Login() {
   return (
     <Screen contentStyle={styles.content}>
       <View style={styles.iconWrap}>
-        <Ionicons name="medical" size={40} color={colors.white} />
+        <PillIcon size={44} />
       </View>
       <View>
         <Text style={[type.h1, { textAlign: "center" }]}>{t("appName")}</Text>
